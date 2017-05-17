@@ -10,7 +10,7 @@ import forecasting_util as fu
 import multiprocessing
 import warnings
 
-from statsmodels.tsa.stattools import adfuller
+#from statsmodels.tsa.stattools import adfuller
 from arch import arch_model
 from keras.models import Sequential
 from keras.layers import Dense
@@ -57,7 +57,7 @@ class Features(object):
 def load_dataset(asset):
 
     #--- Carrega a série original    
-    home_dir = os.getenv("HOME")
+    #home_dir = os.getenv("HOME")
     print (' -> Loading asset file: %s' % asset),
     df_train = pd.read_csv('./data/' + asset)
     print ' -> Done.'
