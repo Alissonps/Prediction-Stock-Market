@@ -367,7 +367,8 @@ for asset in assets:
         
         
     print matrix
-    df = pd.DataFrame(data=matrix, columns=['Arima', 'GARCH'], dtype='float32')
+    df = pd.DataFrame(data=matrix, columns=['Arima', 'GARCH', 'OHLCV_dnn', 'DNN-Anomalous', 'DNN-Autoencoder', 'DNN-RBM', 'DNN-PCA',
+                                            'RF-OHLCV', 'RF-Anomalous', 'RF-Autoencoder', 'RF-RBM', 'RF-PCA'], dtype='float32')
     csv_name = asset + '.csv'
     print 'Salvando'
     df.to_csv('Results/'+csv_name)
