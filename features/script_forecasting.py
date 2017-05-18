@@ -284,7 +284,7 @@ for asset in assets:
     
     for i in range(executions):
 
-        df_array = [0] * len(assets)
+        df_array = [0] * 12
         print(str(i+1) + 'º Análise e previsão de séries temporais para {}. -----'.format(asset))
 
         #--- Carrega e plota a série original - Fechamento (close)
