@@ -155,7 +155,10 @@ def get_predictions_dnn(train, target):
 
         model = Sequential()
         model.add(Dense(64, input_dim=(X_train.shape)[1], init='normal', activation='relu'))
+        model.add(Dense(64, init='normal', activation='relu'))
+        model.add(Dense(32, init='normal', activation='relu'))te
         model.add(Dense(32, init='normal', activation='relu'))
+        model.add(Dense(16, init='normal', activation='relu'))
         model.add(Dense(16, init='normal', activation='relu'))
         model.add(Dense(1, init='normal'))
 
@@ -284,7 +287,7 @@ for asset in assets:
     
     for i in range(executions):
 
-        df_array = [0] * 12
+        df_array = [0] * 5
         print(str(i+1) + 'º Análise e previsão de séries temporais para {}. -----'.format(asset))
 
         #--- Carrega e plota a série original - Fechamento (close)
@@ -335,12 +338,12 @@ for asset in assets:
         df = load_features_files(asset+'.csv')
         
         #--- Executa o treinamento e teste de um modelo ARIMA(0,0,1)    
-        res_arima = train_test_arima(df)
-        df_array[0] = res_arima
+        #res_arima = train_test_arima(df)
+        #df_array[0] = res_arima
         
         #--- Executa o treinamento e teste de um modelo GARCH(1,1) 
-        res_garch = train_test_garch(df)
-        df_array[1] = res_garch
+        #res_garch = train_test_garch(df)
+        #df_array[1] = res_garch
 
         #--- Executa o treinamento e teste de uma rede neural com 3 camadas
         res_OHLCV_dnn, res_anomalous_dnn, res_autoencoder_dnn, res_rbm_dnn, res_pca_dnn = train_test_dnn(df)
@@ -351,24 +354,25 @@ for asset in assets:
         df_array[6] = res_pca_dnn
         
         #--- Executa o treinamento e teste de um ensemble com Random Forest 
-        res_OHLCV_rf, res_anomalous_rf, res_autoencoder_rf, res_rbm_rf, res_pca_rf = train_test_rf(df)
-        df_array[7] = res_OHLCV_rf 
-        df_array[8] = res_anomalous_rf 
-        df_array[9] = res_autoencoder_rf 
-        df_array[10] = res_rbm_rf 
-        df_array[11] = res_pca_rf
+        #res_OHLCV_rf, res_anomalous_rf, res_autoencoder_rf, res_rbm_rf, res_pca_rf = train_test_rf(df)
+        #df_array[7] = res_OHLCV_rf 
+        #df_array[8] = res_anomalous_rf 
+        #df_array[9] = res_autoencoder_rf 
+        #df_array[10] = res_rbm_rf 
+        #df_array[11] = res_pca_rf
 
         # --- Matriz de entrada para o teste de Friedman
-        friedman_matrix.append([res_arima, res_garch,
-                            res_OHLCV_dnn, res_anomalous_dnn, res_autoencoder_dnn, res_rbm_dnn, res_pca_dnn,
-                            res_OHLCV_rf, res_anomalous_rf, res_autoencoder_rf, res_rbm_rf, res_pca_rf]) 
+        #friedman_matrix.append([res_arima, res_garch,
+         #                   res_OHLCV_dnn, res_anomalous_dnn, res_autoencoder_dnn, res_rbm_dnn, res_pca_dnn,
+          #                  res_OHLCV_rf, res_anomalous_rf, res_autoencoder_rf, res_rbm_rf, res_pca_rf]) 
+        
+        friedman_matrix.append([res_OHLCV_dnn, res_anomalous_dnn, res_autoencoder_dnn, res_rbm_dnn, res_pca_dnn]) 
        
         matrix[i] = df_array
         
         
     print matrix
-    df = pd.DataFrame(data=matrix, columns=['Arima', 'GARCH', 'OHLCV_dnn', 'DNN-Anomalous', 'DNN-Autoencoder', 'DNN-RBM', 'DNN-PCA',
-                                            'RF-OHLCV', 'RF-Anomalous', 'RF-Autoencoder', 'RF-RBM', 'RF-PCA'], dtype='float32')
+    df = pd.DataFrame(data=matrix, columns=['OHLCV_dnn', 'DNN-Anomalous', 'DNN-Autoencoder', 'DNN-RBM', 'DNN-PCA'], dtype='float32')
     csv_name = asset + '.csv'
     print 'Salvando'
     df.to_csv('Results/'+csv_name)
