@@ -347,11 +347,11 @@ for asset in assets:
 
         #--- Executa o treinamento e teste de uma rede neural com 3 camadas
         res_OHLCV_dnn, res_anomalous_dnn, res_autoencoder_dnn, res_rbm_dnn, res_pca_dnn = train_test_dnn(df)
-        df_array[2] = res_OHLCV_dnn
-        df_array[3] = res_anomalous_dnn 
-        df_array[4] = res_autoencoder_dnn 
-        df_array[5] = res_rbm_dnn 
-        df_array[6] = res_pca_dnn
+        df_array[0] = res_OHLCV_dnn
+        df_array[1] = res_anomalous_dnn 
+        df_array[2] = res_autoencoder_dnn 
+        df_array[3] = res_rbm_dnn 
+        df_array[4] = res_pca_dnn
         
         #--- Executa o treinamento e teste de um ensemble com Random Forest 
         #res_OHLCV_rf, res_anomalous_rf, res_autoencoder_rf, res_rbm_rf, res_pca_rf = train_test_rf(df)
