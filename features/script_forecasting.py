@@ -156,7 +156,7 @@ def get_predictions_dnn(train, target):
         model = Sequential()
         model.add(Dense(64, input_dim=(X_train.shape)[1], init='normal', activation='relu'))
         model.add(Dense(64, init='normal', activation='relu'))
-        model.add(Dense(32, init='normal', activation='relu'))te
+        model.add(Dense(32, init='normal', activation='relu'))
         model.add(Dense(32, init='normal', activation='relu'))
         model.add(Dense(16, init='normal', activation='relu'))
         model.add(Dense(16, init='normal', activation='relu'))
