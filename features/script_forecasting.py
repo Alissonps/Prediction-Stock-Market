@@ -284,7 +284,7 @@ def train_test_dnn(df):
     print(' -> RMSE - DNN - Returns (OHCLV_pca): {}'.format(res_OHCLV_pca))
     
     res_OHCLV_rbm = get_predictions_dnn(train_OHCLV_rbm, target_returns)
-    print(' -> RMSE - DNN - Returns (OHCLV_pca): {}'.format(res_OHCLV_rbm))
+    print(' -> RMSE - DNN - Returns (OHCLV_rbm): {}'.format(res_OHCLV_rbm))
     
     return res_OHCLV_anomalous, res_OHCLV_autoencoder, res_OHCLV_pca, res_OHCLV_rbm
 
@@ -364,7 +364,7 @@ for asset in assets:
     
     for i in range(executions):
 
-        df_array = [0] * 5
+        df_array = [0] * 4
         print(str(i+1) + 'º Análise e previsão de séries temporais para {}. -----'.format(asset))
 
         #--- Carrega e plota a série original - Fechamento (close)
@@ -445,6 +445,7 @@ for asset in assets:
         friedman_matrix.append([res_OHCLV_anomalous, res_OHCLV_autoencoder, res_OHCLV_pca, res_OHCLV_rbm]) 
        
         matrix[i] = df_array
+        print(matrix)
         
         
     print (matrix)
