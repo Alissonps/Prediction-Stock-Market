@@ -283,6 +283,9 @@ def train_test_dnn(df):
     res_OHCLV_pca = get_predictions_dnn(train_OHCLV_pca, target_returns)
     print(' -> RMSE - DNN - Returns (OHCLV_pca): {}'.format(res_OHCLV_pca))
     
+    res_OHCLV_rbm = get_predictions_dnn(train_OHCLV_rbm, target_returns)
+    print(' -> RMSE - DNN - Returns (OHCLV_pca): {}'.format(res_OHCLV_rbm))
+    
     return res_OHCLV_anomalous, res_OHCLV_autoencoder, res_OHCLV_pca, res_OHCLV_rbm
 
 def get_predictions_rf(train, target):
