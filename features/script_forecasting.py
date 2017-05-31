@@ -342,16 +342,16 @@ def train_test_rf(df):
     # target_volatility = scaler.fit_transform(target_volatility)
 
     res_OHCLV_anomalous = get_predictions_dnn(train_OHCLV_anomalous, target_returns)
-    print(' -> RMSE - DNN - Returns (OHCLV_anomalous): {}'.format(res_OHCLV_anomalous))
+    print(' -> RMSE - RF - Returns (OHCLV_anomalous): {}'.format(res_OHCLV_anomalous))
 
     res_OHCLV_autoencoder = get_predictions_dnn(train_OHCLV_autoencoder, target_returns)
-    print(' -> RMSE - DNN - Returns (OHCLV_autoencoder): {}'.format(res_OHCLV_autoencoder))
+    print(' -> RMSE - RF - Returns (OHCLV_autoencoder): {}'.format(res_OHCLV_autoencoder))
     
     res_OHCLV_pca = get_predictions_dnn(train_OHCLV_pca, target_returns)
-    print(' -> RMSE - DNN - Returns (OHCLV_pca): {}'.format(res_OHCLV_pca))
+    print(' -> RMSE - RF - Returns (OHCLV_pca): {}'.format(res_OHCLV_pca))
     
     res_OHCLV_rbm = get_predictions_dnn(train_OHCLV_rbm, target_returns)
-    print(' -> RMSE - DNN - Returns (OHCLV_rbm): {}'.format(res_OHCLV_rbm))
+    print(' -> RMSE - RF - Returns (OHCLV_rbm): {}'.format(res_OHCLV_rbm))
     
     return res_OHCLV_anomalous, res_OHCLV_autoencoder, res_OHCLV_pca, res_OHCLV_rbm
 
