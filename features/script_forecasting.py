@@ -367,57 +367,59 @@ for asset in assets:
     
     matrix = [0] * executions
     
+    
+    
+
+    #--- Carrega e plota a série original - Fechamento (close)
+    df_train = load_dataset(asset + '.csv')
+    close = df_train['Close']
+    #plt.title('Time Series - '+asset)
+    #plt.xlabel('Number of Observations')
+    #plt.ylabel('Close Value')
+    #plt.plot(close)
+    #plt.show()
+    
+    #--- Exibe a série dos returnos ---
+    target_returns = (pd.read_csv('./data/t1_' + asset+ '.csv'))
+    # plt.title('Time Series - Returns of ' + asset)
+    # plt.xlabel('Number of Observations')
+    # plt.ylabel('Return')
+    # plt.plot(target_returns)
+    # plt.show()
+    
+    # --- Exibe a série de volatilidade ---
+    target_volatility = (pd.read_csv('./data/t2_' + asset + '.csv'))
+    # plt.title('Time Series - Volatility of Returns ' + asset)
+    # plt.xlabel('Number of Observations')
+    # plt.ylabel('Volatility')
+    # plt.plot(target_volatility)
+    # plt.ylim((0.01, 0.02))
+    # plt.show()
+    
+    # print('----- Teste de estacionaridade dos retornos para {}. -----'.format(asset))
+    # target_returns = np.array(target_returns).reshape(-1)
+    # dftest = adfuller(target_returns, maxlag=1)
+    # dfoutput = pd.Series(dftest[0:4], index=['Test Statistic', 'p-value', '#Lags Used', 'Number of Observations Used'])
+    # for key, value in dftest[4].items():
+    #     dfoutput['Critical Value (%s)' % key] = value
+    # print dfoutput
+    
+    # print('----- Teste de estacionaridade da volatilidade para {}. -----'.format(asset))
+    # target_volatility = np.array(target_volatility).reshape(-1)
+    # print (target_returns).shape
+    # dftest = adfuller(target_volatility, maxlag=1)
+    # dfoutput = pd.Series(dftest[0:4], index=['Test Statistic', 'p-value', '#Lags Used', 'Number of Observations Used'])
+    # for key, value in dftest[4].items():
+    #     dfoutput['Critical Value (%s)' % key] = value
+    # print dfoutput
+     
+    #--- TODO: Decomposição das séries
+    df = load_features_files(asset+'.csv')
+    
     for i in range(executions):
 
-        df_array = [0] * 4
         print(str(i+1) + 'º Análise e previsão de séries temporais para {}. -----'.format(asset))
-
-        #--- Carrega e plota a série original - Fechamento (close)
-        df_train = load_dataset(asset + '.csv')
-        close = df_train['Close']
-        #plt.title('Time Series - '+asset)
-        #plt.xlabel('Number of Observations')
-        #plt.ylabel('Close Value')
-        #plt.plot(close)
-        #plt.show()
-        
-        #--- Exibe a série dos returnos ---
-        target_returns = (pd.read_csv('./data/t1_' + asset+ '.csv'))
-        # plt.title('Time Series - Returns of ' + asset)
-        # plt.xlabel('Number of Observations')
-        # plt.ylabel('Return')
-        # plt.plot(target_returns)
-        # plt.show()
-        
-        # --- Exibe a série de volatilidade ---
-        target_volatility = (pd.read_csv('./data/t2_' + asset + '.csv'))
-        # plt.title('Time Series - Volatility of Returns ' + asset)
-        # plt.xlabel('Number of Observations')
-        # plt.ylabel('Volatility')
-        # plt.plot(target_volatility)
-        # plt.ylim((0.01, 0.02))
-        # plt.show()
-        
-        # print('----- Teste de estacionaridade dos retornos para {}. -----'.format(asset))
-        # target_returns = np.array(target_returns).reshape(-1)
-        # dftest = adfuller(target_returns, maxlag=1)
-        # dfoutput = pd.Series(dftest[0:4], index=['Test Statistic', 'p-value', '#Lags Used', 'Number of Observations Used'])
-        # for key, value in dftest[4].items():
-        #     dfoutput['Critical Value (%s)' % key] = value
-        # print dfoutput
-        
-        # print('----- Teste de estacionaridade da volatilidade para {}. -----'.format(asset))
-        # target_volatility = np.array(target_volatility).reshape(-1)
-        # print (target_returns).shape
-        # dftest = adfuller(target_volatility, maxlag=1)
-        # dfoutput = pd.Series(dftest[0:4], index=['Test Statistic', 'p-value', '#Lags Used', 'Number of Observations Used'])
-        # for key, value in dftest[4].items():
-        #     dfoutput['Critical Value (%s)' % key] = value
-        # print dfoutput
-        
-        #--- TODO: Decomposição das séries
-
-        df = load_features_files(asset+'.csv')
+        df_array = [0] * 4
         
         #--- Executa o treinamento e teste de um modelo ARIMA(0,0,1)    
         #res_arima = train_test_arima(df)
