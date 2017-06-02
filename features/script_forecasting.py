@@ -36,7 +36,7 @@ class Features(object):
         self._train_OHCLV_rbm = train_OHCLV_rbm
         self._train_OHCLV_anomalous = train_OHCLV_anomalous
         self._train_pca_autoencoder = train_pca_autoencoder
-        self._train_pca_rmb = train_pca_rmb
+        self._train_pca_rbm = train_pca_rmb
         self._train_pca_anomalous = train_pca_anomalous
         self._train_rbm_autoencoder = train_autoencoder
         self._train_rbm_anomalous = train_rbm_anomalous
