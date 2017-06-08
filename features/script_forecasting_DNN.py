@@ -428,7 +428,7 @@ for asset in assets:
     
     for i in range(executions):
 
-         print(str(i+1) + 'º Análise e previsão de séries temporais para {}. -----'.format(asset))
+        print(str(i+1) + 'º Análise e previsão de séries temporais para {}. -----'.format(asset))
         df_array = [0] * 15
         
         #--- Executa o treinamento e teste de um modelo ARIMA(0,0,1)    
