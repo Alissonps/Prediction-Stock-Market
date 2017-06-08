@@ -246,7 +246,7 @@ def get_predictions_dnn(train, target):
 
 warnings.filterwarnings("ignore")
 def train_test_dnn(df):
-train_OHCLV = df._train_OHCLV
+    train_OHCLV = df._train_OHCLV
     train_anomalous = df._train_anomalous
     train_autoencoder = df._train_autoencoder
     train_rbm = df._train_rbm
