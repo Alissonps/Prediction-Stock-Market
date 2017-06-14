@@ -435,7 +435,7 @@ for asset in assets:
     for i in range(executions):
 
         print(str(i+1) + 'º Análise e previsão de séries temporais para {}. -----'.format(asset))
-        df_array = [0] * 15
+        df_array = [0] * 12
         
         #--- Executa o treinamento e teste de um modelo ARIMA(0,0,1)    
         #res_arima = train_test_arima(df)
@@ -459,9 +459,6 @@ for asset in assets:
         df_array[9] = PCA_anomalous
         df_array[10] = PCA_autoencoder
         df_array[11] = PCA_rbm
-        df_array[12] = PCA_anomalous
-        df_array[13] = PCA_autoencoder
-        df_array[14] = PCA_rbm
 
 
         # --- Matriz de entrada para o teste de Friedman
@@ -473,7 +470,7 @@ for asset in assets:
        
         matrix[i] = df_array        
         
-    df = pd.DataFrame(data=matrix, columns=['OHCLV', 'Anomalous', 'Autoencoder', 'PCA, RBM', 'OHCLV_Anomalous', 'OHCLV_Autoencoder', 'OHCLV_PCA', 'OHCLV_RBM', 'PCA_anomalous', 'PCA_autoencoder', 'PCA_rbm'], dtype='float32')
+    df = pd.DataFrame(data=matrix, columns=['OHCLV', 'Anomalous', 'Autoencoder', 'PCA', 'RBM', 'OHCLV_Anomalous', 'OHCLV_Autoencoder', 'OHCLV_PCA', 'OHCLV_RBM', 'PCA_anomalous', 'PCA_autoencoder', 'PCA_rbm'], dtype='float32')
     csv_name = asset + '_RF.csv'
     print ('Salvando')
     df.to_csv('Results/'+csv_name)
