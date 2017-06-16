@@ -377,7 +377,7 @@ assets = ['ABEV3', 'BBAS3', 'BBDC3', 'BRFS3', 'BVMF3', 'ECOR3', 'EGIE3', 'FIBR3'
 
 friedman_matrix = []
 
-executions = 25
+executions = 1
 for asset in assets:
     
     
