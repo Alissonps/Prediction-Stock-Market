@@ -471,7 +471,7 @@ for asset in assets:
         matrix[i] = df_array        
         
     df = pd.DataFrame(data=matrix, columns=['ARIMA', 'GARCH'], dtype='float32')
-    csv_name = asset + '_ARIMA/GARCH.csv'
+    csv_name = asset + '_ARIMA-GARCH.csv'
     print ('Salvando')
     df.to_csv('Results/'+csv_name)
     print ("Salvo " + csv_name)
