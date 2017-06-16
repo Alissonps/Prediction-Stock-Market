@@ -377,7 +377,7 @@ assets = ['ABEV3', 'BBAS3', 'BBDC3', 'BRFS3', 'BVMF3', 'ECOR3', 'EGIE3', 'FIBR3'
 
 friedman_matrix = []
 
-executions = 1
+executions = 25
 for asset in assets:
     
     
@@ -435,30 +435,30 @@ for asset in assets:
     for i in range(executions):
 
         print(str(i+1) + 'º Análise e previsão de séries temporais para {}. -----'.format(asset))
-        df_array = [0] * 2
+        df_array = [0] * 12
         
         #--- Executa o treinamento e teste de um modelo ARIMA(0,0,1)    
-        res_arima = train_test_arima(df)
-        df_array[0] = res_arima
+        #res_arima = train_test_arima(df)
+        #df_array[0] = res_arima
         
         #--- Executa o treinamento e teste de um modelo GARCH(1,1) 
-        res_garch = train_test_garch(df)
-        df_array[1] = res_garch
+        #res_garch = train_test_garch(df)
+        #df_array[1] = res_garch
         
         #Executa o treinamento e teste de um ensemble com Random Forest 
-#         OHCLV, Anomalous, Autoencoder, PCA, RBM, OHCLV_Anomalous, OHCLV_Autoencoder, OHCLV_PCA, OHCLV_RBM, PCA_anomalous, PCA_autoencoder, PCA_rbm = train_test_rf(df)
-#         df_array[0] = OHCLV
-#         df_array[1] = Anomalous
-#         df_array[2] = Autoencoder
-#         df_array[3] = PCA 
-#         df_array[4] = RBM
-#         df_array[5] = OHCLV_Anomalous
-#         df_array[6] = OHCLV_Autoencoder
-#         df_array[7] = OHCLV_PCA 
-#         df_array[8] = OHCLV_RBM
-#         df_array[9] = PCA_anomalous    
-#         df_array[10] = PCA_autoencoder
-#         df_array[11] = PCA_rbm
+        OHCLV, Anomalous, Autoencoder, PCA, RBM, OHCLV_Anomalous, OHCLV_Autoencoder, OHCLV_PCA, OHCLV_RBM, PCA_anomalous, PCA_autoencoder, PCA_rbm = train_test_rf(df)
+        df_array[0] = OHCLV
+        df_array[1] = Anomalous
+        df_array[2] = Autoencoder
+        df_array[3] = PCA 
+        df_array[4] = RBM
+        df_array[5] = OHCLV_Anomalous
+        df_array[6] = OHCLV_Autoencoder
+        df_array[7] = OHCLV_PCA 
+        df_array[8] = OHCLV_RBM
+        df_array[9] = PCA_anomalous    
+        df_array[10] = PCA_autoencoder
+        df_array[11] = PCA_rbm
 
 
         # --- Matriz de entrada para o teste de Friedman
@@ -470,8 +470,9 @@ for asset in assets:
        
         matrix[i] = df_array        
         
-    df = pd.DataFrame(data=matrix, columns=['ARIMA', 'GARCH'], dtype='float32')
-    csv_name = asset + '_ARIMA-GARCH.csv'
+    df = pd.DataFrame(data=matrix, columns=['OHCLV', 'Anomalous', 'Autoencoder', 'PCA', 'RBM', 'OHCLV_Anomalous', 'OHCLV_Autoencoder'
+                                            , 'OHCLV_PCA', 'OHCLV_RBM', 'PCA_anomalous', 'PCA_autoencoder', 'PCA_rbm'], dtype='float32')
+    csv_name = asset + '_RF.csv'
     print ('Salvando')
     df.to_csv('Results/'+csv_name)
     print ("Salvo " + csv_name)

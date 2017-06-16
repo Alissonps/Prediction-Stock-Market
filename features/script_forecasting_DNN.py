@@ -439,7 +439,7 @@ for asset in assets:
         #res_garch = train_test_garch(df)
         #df_array[1] = res_garch
         
-        #Executa o treinamento e teste de um ensemble com Random Forest 
+        #Executa o treinamento e teste de um ensemble com DNN
         OHCLV, Anomalous, Autoencoder, PCA, RBM, OHCLV_Anomalous, OHCLV_Autoencoder, OHCLV_PCA, OHCLV_RBM, PCA_anomalous, PCA_autoencoder, PCA_rbm = train_test_dnn(df)
         df_array[0] = OHCLV
         df_array[1] = Anomalous
@@ -466,7 +466,7 @@ for asset in assets:
         
     df = pd.DataFrame(data=matrix, columns=['OHCLV', 'Anomalous', 'Autoencoder', 'PCA', 'RBM', 'OHCLV_Anomalous', 'OHCLV_Autoencoder'
                                             , 'OHCLV_PCA', 'OHCLV_RBM', 'PCA_anomalous', 'PCA_autoencoder', 'PCA_rbm'], dtype='float32')
-    csv_name = asset + '_RF.csv'
+    csv_name = asset + '_DNN.csv'
     print ('Salvando')
     df.to_csv('Results/'+csv_name)
     print ("Salvo " + csv_name)
