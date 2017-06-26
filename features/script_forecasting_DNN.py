@@ -9,12 +9,9 @@ import matplotlib.pylab as plt
 import forecasting_util as fu
 import multiprocessing
 import warnings
-
-#from statsmodels.tsa.stattools import adfuller
 from arch import arch_model
 from keras.models import Sequential
 from keras.layers import Dense
-
 from sklearn import preprocessing
 from sklearn.model_selection import TimeSeriesSplit
 from sklearn.metrics import mean_squared_error
@@ -210,7 +207,7 @@ def train_test_garch(df):
 
     return res
 
-def get_predictions_dnn(train, target):
+def get_predictions_dnn(train, target, diretorio, modelo):
 
     rmse_returns = []
 
@@ -242,10 +239,20 @@ def get_predictions_dnn(train, target):
         rmse = np.sqrt(mean_squared_error(y_test, pred))
         rmse_returns.append(rmse)
 
+
+    prev = model.predict(train, batch_size =32, verbose=0)
+    
+    plt.plot(target, linestyle= '-', color='blue', label="Target")
+    plt.plot(prev, linestyle= '-', color='green', label= "Prediction")
+    plt.legend(loc='upper left')
+    plt.savefig(diretorio+modelo+'.png', dpi=1200, format='png')
+    plt.close()
+    print("Salvo plot ", modelo)
     return np.mean(rmse_returns)
 
 warnings.filterwarnings("ignore")
 def train_test_dnn(df):
+    
     train_OHCLV = df._train_OHCLV
     train_anomalous = df._train_anomalous
     train_autoencoder = df._train_autoencoder
@@ -269,11 +276,11 @@ def train_test_dnn(df):
     train_autoencoder = scaler.fit_transform(train_autoencoder)
     train_rbm = scaler.fit_transform(train_rbm)
     train_pca = scaler.fit_transform(train_pca)
+    train_OHCLV = scaler.fit_transform(train_OHCLV)
     train_OHCLV_anomalous = scaler.fit_transform(train_OHCLV_anomalous)
     train_OHCLV_autoencoder = scaler.fit_transform(train_OHCLV_autoencoder)
     train_OHCLV_pca = scaler.fit_transform(train_OHCLV_pca)
     train_OHCLV_rbm = scaler.fit_transform(train_OHCLV_rbm)
-    train_OHCLV = scaler.fit_transform(train_OHCLV)
     train_PCA_anomalous = scaler.fit_transform(train_PCA_anomalous)
     train_PCA_autoencoder = scaler.fit_transform(train_PCA_autoencoder)
     train_PCA_rbm = scaler.fit_transform(train_PCA_rbm)
@@ -281,101 +288,32 @@ def train_test_dnn(df):
     #target_returns = scaler.fit_transform(target_returns)
     target_volatility = scaler.fit_transform(target_volatility)
 
-    res_OHCLV = get_predictions_dnn(train_OHCLV, target_volatility)
-    res_Anomalous = get_predictions_dnn(train_anomalous, target_volatility)
-    res_Autoencoder = get_predictions_dnn(train_autoencoder, target_volatility)
-    res_PCA = get_predictions_dnn(train_pca, target_volatility)
-    res_RBM = get_predictions_dnn(train_rbm, target_volatility)
-    res_OHCLV_Anomalous = get_predictions_dnn(train_OHCLV_anomalous, target_volatility)
-    res_OHCLV_Autoencoder = get_predictions_dnn(train_OHCLV_autoencoder, target_volatility)
-    res_OHCLV_PCA = get_predictions_dnn(train_OHCLV_pca, target_volatility)
-    res_OHCLV_RBM = get_predictions_dnn(train_OHCLV_rbm, target_volatility)
-    res_PCA_Anomalous = get_predictions_dnn(train_PCA_anomalous, target_volatility)
-    res_PCA_Autoencoder = get_predictions_dnn(train_PCA_autoencoder, target_volatility)
-    res_PCA_RBM = get_predictions_dnn(train_PCA_rbm, target_volatility)
+    target = target_volatility
+
+    diretorio = "Plots/"
+    res_OHCLV = get_predictions_dnn(train_OHCLV, target, diretorio, 'OHCLV')
+    res_Anomalous = get_predictions_dnn(train_anomalous, target, diretorio, 'Anomalous')
+    res_Autoencoder = get_predictions_dnn(train_autoencoder, target, diretorio, 'Autoencoder')
+    res_PCA = get_predictions_dnn(train_pca, target, diretorio, 'PCA')
+    res_RBM = get_predictions_dnn(train_rbm, target, diretorio, 'RBM')
+    res_OHCLV_Anomalous = get_predictions_dnn(train_OHCLV_anomalous, target, diretorio, 'OHCLV_Anomalous')
+    res_OHCLV_Autoencoder = get_predictions_dnn(train_OHCLV_autoencoder, target, diretorio, 'OHCLV_Autoencoder')
+    res_OHCLV_PCA = get_predictions_dnn(train_OHCLV_pca, target, diretorio, 'OHCLV_PCA')
+    res_OHCLV_RBM = get_predictions_dnn(train_OHCLV_rbm, target, diretorio, 'OHCLV_RBM')
+    res_PCA_Anomalous = get_predictions_dnn(train_PCA_anomalous, target, diretorio, 'PCA_Anomalous')
+    res_PCA_Autoencoder = get_predictions_dnn(train_PCA_autoencoder, target, diretorio, 'PCA_Autoencoder')
+    res_PCA_RBM = get_predictions_dnn(train_PCA_rbm, target, diretorio, 'PCA_RBM')
     
     return res_OHCLV, res_Anomalous, res_Autoencoder, res_PCA, res_RBM, res_OHCLV_Anomalous, res_OHCLV_Autoencoder, res_OHCLV_PCA, res_OHCLV_RBM, res_PCA_Anomalous, res_PCA_Autoencoder, res_PCA_RBM, 
 
-def get_predictions_rf(train, target):
-
-    rmse_returns = []
-
-    tscv = TimeSeriesSplit(n_splits=10)
-    for train_index, test_index in tscv.split(target):
-        # --- Cross validation - OHCLV
-
-        X_train, X_test = train[train_index], train[test_index]
-        y_train, y_test = np.transpose(target)[train_index], np.transpose(target)[
-            test_index]
-
-        y_train = np.transpose(y_train)
-        y_test = np.transpose(y_test)
-
-        model = RandomForestRegressor(n_estimators=200).fit(X_train, y_train)
-        pred = model.predict(X_test)
-        rmse = np.sqrt(mean_squared_error(y_test, pred))
-        rmse_returns.append(rmse)
-
-    return np.mean(rmse_returns)
-
-warnings.filterwarnings("ignore")
-def train_test_rf(df):
-
-#     train_OHCLV_pca = df._train_OHCLV_pca
-#     train_OHCLV_rbm = df._train_OHCLV_rbm
-#     train_OHCLV_autoencoder = df._train_OHCLV_autoencoder
-#     train_OHCLV_anomalous = df._train_OHCLV_anomalous
-    train_PCA_anomalous = df._train_pca_anomalous
-    train_PCA_autoencoder = df._train_pca_autoencoder
-    train_PCA_rbm = df._train_pca_rbm
-#     train_OHCLV = df._train_OHCLV
-#     train_anomalous = df._train_anomalous
-#     train_autoencoder = df._train_autoencoder
-#     train_rbm = df._train_rbm
-#     train_pca = df._train_pca
-
-    target_returns = df._target_returns
-    target_volatility = df._target_volatility
-
-    scaler = preprocessing.MinMaxScaler()
-
-#     train_OHCLV_anomalous = scaler.fit_transform(train_OHCLV_anomalous)
-#     train_OHCLV_autoencoder = scaler.fit_transform(train_OHCLV_autoencoder)
-#     train_OHCLV_pca = scaler.fit_transform(train_OHCLV_pca)
-#     train_OHCLV_rbm = scaler.fit_transform(train_OHCLV_rbm)
-#     train_OHCLV = scaler.fit_transform(train_OHCLV)
-    train_PCA_anomalous = scaler.fit_transform(train_PCA_anomalous)
-    train_PCA_autoencoder = scaler.fit_transform(train_PCA_autoencoder)
-    train_PCA_rbm = scaler.fit_transform(train_PCA_rbm)
-#     train_anomalous = scaler.fit_transform(train_anomalous)
-#     train_autoencoder = scaler.fit_transform(train_autoencoder)
-#     train_rbm = scaler.fit_transform(train_rbm)
-#     train_pca = scaler.fit_transform(train_pca)
-
-    target_returns = scaler.fit_transform(target_returns)
-    # target_volatility = scaler.fit_transform(target_volatility)
-
-    res_OHCLV_anomalous = get_predictions_dnn(train_PCA_anomalous, target_returns)
-    print(' -> RMSE - RF - Returns (PCA_anomalous_RF): {}'.format(res_OHCLV_anomalous))
-
-    res_OHCLV_autoencoder = get_predictions_dnn(train_PCA_autoencoder, target_returns)
-    print(' -> RMSE - RF - Returns (PCA_autoencoder_RF): {}'.format(res_OHCLV_autoencoder))
-    
-#     res_OHCLV_pca = get_predictions_dnn(train_OHCLV_pca, target_returns)
-#     print(' -> RMSE - RF - Returns (OHCLV_pca): {}'.format(res_OHCLV_pca))
-    
-    res_OHCLV_rbm = get_predictions_dnn(train_PCA_rbm, target_returns)
-    print(' -> RMSE - RF - Returns (PCA_rbm_RF): {}'.format(res_OHCLV_rbm))
-    
-    return res_OHCLV_anomalous, res_OHCLV_autoencoder, res_OHCLV_rbm
-
 #--- Main Module ---
 
-assets = ['ABEV3', 'BBAS3', 'BBDC3', 'BRFS3', 'BVMF3', 'ECOR3', 'EGIE3', 'FIBR3', 'MULT3', 'PETR4', 'RAIL3', 'RENT3', 'VALE5']
+#assets = ['ABEV3', 'BBAS3', 'BBDC3', 'BRFS3', 'BVMF3', 'ECOR3', 'EGIE3', 'FIBR3', 'MULT3', 'PETR4', 'RAIL3', 'RENT3', 'VALE5']
+assets = ['ABEV3']
 
 friedman_matrix = []
 
-executions = 25
+executions = 1
 for asset in assets:
         
     matrix = [0] * executions

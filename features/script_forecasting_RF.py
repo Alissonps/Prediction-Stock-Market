@@ -277,8 +277,8 @@ def train_test_dnn(df):
     train_PCA_autoencoder = scaler.fit_transform(train_PCA_autoencoder)
     train_PCA_rbm = scaler.fit_transform(train_PCA_rbm)
 
-    target_returns = scaler.fit_transform(target_returns)
-    # target_volatility = scaler.fit_transform(target_volatility)
+    #target_returns = scaler.fit_transform(target_returns)
+    target_volatility = scaler.fit_transform(target_volatility)
 
     res_OHCLV_anomalous = get_predictions_dnn(train_PCA_anomalous, target_returns)
     print(' -> RMSE - DNN - Returns (PCA_anomalous_DNN): {}'.format(res_OHCLV_anomalous))
@@ -294,7 +294,7 @@ def train_test_dnn(df):
     
     return res_OHCLV_anomalous, res_OHCLV_autoencoder, res_OHCLV_rbm
 
-def get_predictions_rf(train, target):
+def get_predictions_rf(train, target, diretorio, modelo):
 
     rmse_returns = []
 
@@ -314,6 +314,16 @@ def get_predictions_rf(train, target):
         rmse = np.sqrt(mean_squared_error(y_test, pred))
         rmse_returns.append(rmse)
 
+
+    prev = model.predict(train)
+    
+    plt.plot(target, linestyle= '-', color='blue', label="Target")
+    plt.plot(prev, linestyle= '-', color='green', label= "Prediction")
+    plt.legend(loc='upper left')
+    plt.savefig(diretorio+modelo+'.png', dpi=1200, format='png')
+    plt.close()
+    print("Salvo plot ", modelo)
+
     return np.mean(rmse_returns)
 
 warnings.filterwarnings("ignore")
@@ -332,8 +342,8 @@ def train_test_rf(df):
     train_PCA_autoencoder = df._train_pca_autoencoder
     train_PCA_rbm = df._train_pca_rbm
 
-    #target_returns = df._target_returns
-    target_volatility = df._target_volatility
+    target_returns = df._target_returns
+    #target_volatility = df._target_volatility
 
     scaler = preprocessing.MinMaxScaler()
 
@@ -351,21 +361,25 @@ def train_test_rf(df):
     train_PCA_autoencoder = scaler.fit_transform(train_PCA_autoencoder)
     train_PCA_rbm = scaler.fit_transform(train_PCA_rbm)
 
-    #target_returns = scaler.fit_transform(target_returns)
-    target_volatility = scaler.fit_transform(target_volatility)
+    target_returns = scaler.fit_transform(target_returns)
+    #target_volatility = scaler.fit_transform(target_volatility)
 
-    res_OHCLV = get_predictions_rf(train_OHCLV, target_volatility)
-    res_Anomalous = get_predictions_rf(train_anomalous, target_volatility)
-    res_Autoencoder = get_predictions_rf(train_autoencoder, target_volatility)
-    res_PCA = get_predictions_rf(train_pca, target_volatility)
-    res_RBM = get_predictions_rf(train_rbm, target_volatility)
-    res_OHCLV_Anomalous = get_predictions_rf(train_OHCLV_anomalous, target_volatility)
-    res_OHCLV_Autoencoder = get_predictions_rf(train_OHCLV_autoencoder, target_volatility)
-    res_OHCLV_PCA = get_predictions_rf(train_OHCLV_pca, target_volatility)
-    res_OHCLV_RBM = get_predictions_rf(train_OHCLV_rbm, target_volatility)
-    res_PCA_Anomalous = get_predictions_rf(train_PCA_anomalous, target_volatility)
-    res_PCA_Autoencoder = get_predictions_rf(train_PCA_autoencoder, target_volatility)
-    res_PCA_RBM = get_predictions_rf(train_PCA_rbm, target_volatility)
+    target = target_returns
+    
+    diretorio = "Plots/RF/Retornos/"
+
+    res_OHCLV = get_predictions_rf(train_OHCLV, target, diretorio, 'OHCLV')
+    res_Anomalous = get_predictions_rf(train_anomalous, target, diretorio, 'Anomalous')
+    res_Autoencoder = get_predictions_rf(train_autoencoder, target, diretorio, 'Autoencoder')
+    res_PCA = get_predictions_rf(train_pca, target, diretorio, 'PCA')
+    res_RBM = get_predictions_rf(train_rbm, target, diretorio, 'RBM')
+    res_OHCLV_Anomalous = get_predictions_rf(train_OHCLV_anomalous, target, diretorio, 'OHCLV_Anomalous')
+    res_OHCLV_Autoencoder = get_predictions_rf(train_OHCLV_autoencoder, target, diretorio, 'OHCLV_Autoencoder')
+    res_OHCLV_PCA = get_predictions_rf(train_OHCLV_pca, target, diretorio, 'OHCLV_PCA')
+    res_OHCLV_RBM = get_predictions_rf(train_OHCLV_rbm, target, diretorio, 'OHCLV_RBM')
+    res_PCA_Anomalous = get_predictions_rf(train_PCA_anomalous, target, diretorio, 'PCA_Anomalous')
+    res_PCA_Autoencoder = get_predictions_rf(train_PCA_autoencoder, target, diretorio, 'PCA_Autoencoder')
+    res_PCA_RBM = get_predictions_rf(train_PCA_rbm, target, diretorio, 'PCA_RBM')
     
     
     
@@ -373,11 +387,11 @@ def train_test_rf(df):
 
 #--- Main Module ---
 
-assets = ['ABEV3', 'BBAS3', 'BBDC3', 'BRFS3', 'BVMF3', 'ECOR3', 'EGIE3', 'FIBR3', 'MULT3', 'PETR4', 'RAIL3', 'RENT3', 'VALE5']
-
+assets = ['ABEV3']
+#assets = ['ABEV3', 'BBAS3', 'BBDC3', 'BRFS3', 'BVMF3', 'ECOR3', 'EGIE3', 'FIBR3', 'MULT3', 'PETR4', 'RAIL3', 'RENT3', 'VALE5']
 friedman_matrix = []
 
-executions = 25
+executions = 1
 for asset in assets:
     
     
@@ -397,20 +411,20 @@ for asset in assets:
     
     #--- Exibe a série dos returnos ---
     target_returns = (pd.read_csv('./data/t1_' + asset+ '.csv'))
-    # plt.title('Time Series - Returns of ' + asset)
-    # plt.xlabel('Number of Observations')
-    # plt.ylabel('Return')
-    # plt.plot(target_returns)
-    # plt.show()
+#     plt.title('Time Series - Returns of ' + asset)
+#     plt.xlabel('Number of Observations')
+#     plt.ylabel('Return')
+#     plt.plot(target_returns)
+#     plt.show()
     
     # --- Exibe a série de volatilidade ---
     target_volatility = (pd.read_csv('./data/t2_' + asset + '.csv'))
-    # plt.title('Time Series - Volatility of Returns ' + asset)
-    # plt.xlabel('Number of Observations')
-    # plt.ylabel('Volatility')
-    # plt.plot(target_volatility)
-    # plt.ylim((0.01, 0.02))
-    # plt.show()
+#     plt.title('Time Series - Volatility of Returns ' + asset)
+#     plt.xlabel('Number of Observations')
+#     plt.ylabel('Volatility')
+#     plt.plot(target_volatility)
+#     plt.ylim((0.01, 0.02))
+#     plt.show()
     
     # print('----- Teste de estacionaridade dos retornos para {}. -----'.format(asset))
     # target_returns = np.array(target_returns).reshape(-1)
@@ -431,21 +445,21 @@ for asset in assets:
      
     #--- TODO: Decomposição das séries
     df = load_features_files(asset+'.csv')
-    
+     
     for i in range(executions):
-
+ 
         print(str(i+1) + 'º Análise e previsão de séries temporais para {}. -----'.format(asset))
         df_array = [0] * 12
-        
-        #--- Executa o treinamento e teste de um modelo ARIMA(0,0,1)    
-        #res_arima = train_test_arima(df)
-        #df_array[0] = res_arima
-        
-        #--- Executa o treinamento e teste de um modelo GARCH(1,1) 
-        #res_garch = train_test_garch(df)
-        #df_array[1] = res_garch
-        
-        #Executa o treinamento e teste de um ensemble com Random Forest 
+#         
+#         #--- Executa o treinamento e teste de um modelo ARIMA(0,0,1)    
+#         #res_arima = train_test_arima(df)
+#         #df_array[0] = res_arima
+#         
+#         #--- Executa o treinamento e teste de um modelo GARCH(1,1) 
+#         #res_garch = train_test_garch(df)
+#         #df_array[1] = res_garch
+#         
+#         #Executa o treinamento e teste de um ensemble com Random Forest 
         OHCLV, Anomalous, Autoencoder, PCA, RBM, OHCLV_Anomalous, OHCLV_Autoencoder, OHCLV_PCA, OHCLV_RBM, PCA_anomalous, PCA_autoencoder, PCA_rbm = train_test_rf(df)
         df_array[0] = OHCLV
         df_array[1] = Anomalous
@@ -459,23 +473,23 @@ for asset in assets:
         df_array[9] = PCA_anomalous    
         df_array[10] = PCA_autoencoder
         df_array[11] = PCA_rbm
-
-
-        # --- Matriz de entrada para o teste de Friedman
-        #friedman_matrix.append([res_arima, res_garch,
-         #                   res_OHCLV_dnn, res_anomalous_dnn, res_autoencoder_dnn, res_rbm_dnn, res_pca_dnn,
-          #                  res_OHCLV_rf, res_anomalous_rf, res_autoencoder_rf, res_rbm_rf, res_pca_rf]) 
-        
-        #friedman_matrix.append([res_PCA_anomalous_DNN, res_PCA_autoencoder_DNN, res_PCA_rbm_DNN, res_PCA_anomalous_RF, res_PCA_autoencoder_RF, res_PCA_rbm_RF]) 
-       
-        matrix[i] = df_array        
-        
-    df = pd.DataFrame(data=matrix, columns=['OHCLV', 'Anomalous', 'Autoencoder', 'PCA', 'RBM', 'OHCLV_Anomalous', 'OHCLV_Autoencoder'
-                                            , 'OHCLV_PCA', 'OHCLV_RBM', 'PCA_anomalous', 'PCA_autoencoder', 'PCA_rbm'], dtype='float32')
-    csv_name = asset + '_RF.csv'
-    print ('Salvando')
-    df.to_csv('Results/'+csv_name)
-    print ("Salvo " + csv_name)
+# 
+# 
+#         # --- Matriz de entrada para o teste de Friedman
+#         #friedman_matrix.append([res_arima, res_garch,
+#          #                   res_OHCLV_dnn, res_anomalous_dnn, res_autoencoder_dnn, res_rbm_dnn, res_pca_dnn,
+#           #                  res_OHCLV_rf, res_anomalous_rf, res_autoencoder_rf, res_rbm_rf, res_pca_rf]) 
+#         
+#         #friedman_matrix.append([res_PCA_anomalous_DNN, res_PCA_autoencoder_DNN, res_PCA_rbm_DNN, res_PCA_anomalous_RF, res_PCA_autoencoder_RF, res_PCA_rbm_RF]) 
+#        
+#         matrix[i] = df_array        
+#         
+#     df = pd.DataFrame(data=matrix, columns=['OHCLV', 'Anomalous', 'Autoencoder', 'PCA', 'RBM', 'OHCLV_Anomalous', 'OHCLV_Autoencoder'
+#                                             , 'OHCLV_PCA', 'OHCLV_RBM', 'PCA_anomalous', 'PCA_autoencoder', 'PCA_rbm'], dtype='float32')
+#     csv_name = asset + '_RF.csv'
+#     print ('Salvando')
+#     df.to_csv('Results/'+csv_name)
+#     print ("Salvo " + csv_name)
     
         
 #--- Ajusta a matriz para uso da função com o teste de Friedman
