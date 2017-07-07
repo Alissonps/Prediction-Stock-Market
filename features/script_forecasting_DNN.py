@@ -210,6 +210,8 @@ def train_test_garch(df):
 def get_predictions_dnn(train, target, diretorio, modelo):
 
     rmse_returns = []
+    prev = []
+    test = []
 
     tscv = TimeSeriesSplit(n_splits=10)
     for train_index, test_index in tscv.split(target):
@@ -236,14 +238,20 @@ def get_predictions_dnn(train, target, diretorio, modelo):
         model.fit(X_train, y_train, nb_epoch=100, batch_size=32,
                         validation_data=(X_test, y_test), shuffle=False, verbose=0)
         pred = model.predict(X_test, batch_size=32, verbose=0)
+    
+        prev.append(pred)
+        test.append(y_test)
         rmse = np.sqrt(mean_squared_error(y_test, pred))
         rmse_returns.append(rmse)
 
 
-    prev = model.predict(train, batch_size =32, verbose=0)
+    #prev = model.predict(train, batch_size =32, verbose=0)
     
-    plt.plot(target, linestyle= '-', color='blue', label="Target")
-    plt.plot(prev, linestyle= '-', color='green', label= "Prediction")
+    test = np.transpose(test)
+    prev = np.transpose(prev)
+    
+    plt.plot(y_test, linestyle= '-', color='blue', label="Target")
+    plt.plot(pred, linestyle= '-', color='green', label= "Prediction")
     plt.legend(loc='upper left')
     plt.savefig(diretorio+modelo+'.png', dpi=1200, format='png')
     plt.close()
@@ -266,8 +274,8 @@ def train_test_dnn(df):
     train_PCA_autoencoder = df._train_pca_autoencoder
     train_PCA_rbm = df._train_pca_rbm
 
-    #target_returns = df._target_returns
-    target_volatility = df._target_volatility
+    target_returns = df._target_returns
+    #target_volatility = df._target_volatility
 
     scaler = preprocessing.MinMaxScaler()
 
@@ -285,12 +293,12 @@ def train_test_dnn(df):
     train_PCA_autoencoder = scaler.fit_transform(train_PCA_autoencoder)
     train_PCA_rbm = scaler.fit_transform(train_PCA_rbm)
 
-    #target_returns = scaler.fit_transform(target_returns)
-    target_volatility = scaler.fit_transform(target_volatility)
+    target_returns = scaler.fit_transform(target_returns)
+    #target_volatility = scaler.fit_transform(target_volatility)
 
-    target = target_volatility
+    target = target_returns
 
-    diretorio = "Plots/"
+    diretorio = "Plots/DNN/Retornos/"
     res_OHCLV = get_predictions_dnn(train_OHCLV, target, diretorio, 'OHCLV')
     res_Anomalous = get_predictions_dnn(train_anomalous, target, diretorio, 'Anomalous')
     res_Autoencoder = get_predictions_dnn(train_autoencoder, target, diretorio, 'Autoencoder')
@@ -399,16 +407,16 @@ for asset in assets:
           #                  res_OHCLV_rf, res_anomalous_rf, res_autoencoder_rf, res_rbm_rf, res_pca_rf]) 
         
         #friedman_matrix.append([res_PCA_anomalous_DNN, res_PCA_autoencoder_DNN, res_PCA_rbm_DNN, res_PCA_anomalous_RF, res_PCA_autoencoder_RF, res_PCA_rbm_RF]) 
-       
-        matrix[i] = df_array        
-        
-    df = pd.DataFrame(data=matrix, columns=['OHCLV', 'Anomalous', 'Autoencoder', 'PCA', 'RBM', 'OHCLV_Anomalous', 'OHCLV_Autoencoder'
-                                            , 'OHCLV_PCA', 'OHCLV_RBM', 'PCA_anomalous', 'PCA_autoencoder', 'PCA_rbm'], dtype='float32')
-    csv_name = asset + '_DNN.csv'
-    print ('Salvando')
-    df.to_csv('Results/'+csv_name)
-    print ("Salvo " + csv_name)
-    
+#        
+#         matrix[i] = df_array        
+#         
+#     df = pd.DataFrame(data=matrix, columns=['OHCLV', 'Anomalous', 'Autoencoder', 'PCA', 'RBM', 'OHCLV_Anomalous', 'OHCLV_Autoencoder'
+#                                             , 'OHCLV_PCA', 'OHCLV_RBM', 'PCA_anomalous', 'PCA_autoencoder', 'PCA_rbm'], dtype='float32')
+#     csv_name = asset + '_DNN.csv'
+#     print ('Salvando')
+#     df.to_csv('Results/'+csv_name)
+#     print ("Salvo " + csv_name)
+#     
 #         
 # #--- Ajusta a matriz para uso da função com o teste de Friedman
 # friedman_matrix = np.array(friedman_matrix).reshape(-1, 6)
